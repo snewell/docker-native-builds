@@ -1,13 +1,20 @@
-FROM snewell/gcc-10
+FROM ubuntu:20.04
 
 RUN apt-get update \
- && apt-get install --no-install-recommends -y \
+ && DEBIAN_FRONTEND="noninteractive" apt-get install --no-install-recommends -y \
+        cmake \
         default-jre-headless \
+        gcc-10 \
+        g++-10 \
+        git \
+        make \
  && rm -rf /var/lib/apt/lists/* \
+ # Set default gcc
+ && update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10  10 \
+ && update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-10  10 \
  # Create a jenkins user
- && useradd --system jenkins \
- && mkdir /work \
- && chown jenkins:jenkins /work
+ && useradd -m jenkins
 
 WORKDIR /work
+RUN chown jenkins:jenkins /work
 USER jenkins
